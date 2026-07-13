@@ -1,0 +1,186 @@
+.rapports-page {
+  padding: var(--spacing-lg);
+}
+
+.rapports-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.rapports-header h1 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+}
+
+.rapports-subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.btn-publier {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-publier:hover {
+  background-color: var(--color-primary-light);
+}
+
+/* KPIs */
+.rapports-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon-primary {
+  background-color: rgba(30, 58, 95, 0.1);
+  color: var(--color-primary);
+}
+
+.stat-icon-secondary {
+  background-color: rgba(44, 122, 123, 0.15);
+  color: var(--color-secondary);
+}
+
+.stat-icon-success {
+  background-color: rgba(44, 122, 123, 0.15);
+  color: var(--color-secondary);
+}
+
+.stat-icon-warning {
+  background-color: rgba(242, 166, 90, 0.2);
+  color: #B5722A;
+}
+
+.stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Grille de rapports */
+.rapports-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.rapport-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+}
+
+.rapport-card-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Barres de répartition */
+.rapport-barres {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.rapport-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rapport-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.rapport-bar-valeur {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.rapport-bar-track {
+  height: 8px;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.rapport-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-lg);
+  transition: width 0.3s ease;
+}
+
+.rapport-bar-primary {
+  background-color: var(--color-primary);
+}
+
+.rapport-bar-secondary {
+  background-color: var(--color-secondary);
+}
+
+.rapport-bar-accent {
+  background-color: var(--color-accent);
+}
+
+.rapport-bar-danger {
+  background-color: var(--color-danger);
+}
+
+.rapport-bar-muted {
+  background-color: var(--color-text-muted);
+}
+
+@media (max-width: 900px) {
+  .rapports-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rapports-grid {
+    grid-template-columns: 1fr;
+  }
+}

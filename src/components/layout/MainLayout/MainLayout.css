@@ -1,0 +1,19 @@
+.content {
+  margin-left: 240px;
+  margin-top: 64px;
+  padding: var(--spacing-xl);
+  min-height: calc(100vh - 64px);
+  transition: margin-left 0.25s ease;
+}
+
+@media (max-width: 900px) {
+  .content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: var(--spacing-md);
+  }
+}

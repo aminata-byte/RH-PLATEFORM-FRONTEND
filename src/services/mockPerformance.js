@@ -1,0 +1,78 @@
+export const mockObjectifs = [
+  {
+    id: 1,
+    employeId: 3,
+    employeNom: "Awa Sarr",
+    titre: "Livrer le module de reporting",
+    progression: 75,
+    statut: "en_cours",
+    echeance: "2026-08-30",
+  },
+  {
+    id: 2,
+    employeId: 3,
+    employeNom: "Awa Sarr",
+    titre: "Réduire le temps de build de 20%",
+    progression: 100,
+    statut: "atteint",
+    echeance: "2026-06-15",
+  },
+  {
+    id: 3,
+    employeId: 6,
+    employeNom: "Cheikh Kanté",
+    titre: "Migrer l'API vers Laravel 11",
+    progression: 40,
+    statut: "en_cours",
+    echeance: "2026-09-01",
+  },
+  {
+    id: 4,
+    employeId: 10,
+    employeNom: "Modou Seck",
+    titre: "Certifier l'équipe sur les tests unitaires",
+    progression: 20,
+    statut: "non_atteint",
+    echeance: "2026-05-30",
+  },
+  {
+    id: 5,
+    employeId: 2,
+    employeNom: "Moussa Diop",
+    titre: "Livrer le projet TalibeVoice",
+    progression: 90,
+    statut: "en_cours",
+    echeance: "2026-07-31",
+  },
+];
+
+export const mockEvaluations = [
+  {
+    id: 1,
+    employeId: 3,
+    employeNom: "Awa Sarr",
+    date: "2026-06-30",
+    note: 4.5,
+    commentaire: "Excellent travail sur le module de reporting, très autonome.",
+    evaluateur: "Moussa Diop",
+  },
+  {
+    id: 2,
+    employeId: 6,
+    employeNom: "Cheikh Kanté",
+    date: "2026-05-15",
+    note: 3.5,
+    commentaire:
+      "Bonne progression, doit améliorer la communication en équipe.",
+    evaluateur: "Moussa Diop",
+  },
+  {
+    id: 3,
+    employeId: 10,
+    employeNom: "Modou Seck",
+    date: "2026-04-20",
+    note: 2.5,
+    commentaire: "Retard sur les livrables, plan d'action à mettre en place.",
+    evaluateur: "Fatou Ndiaye",
+  },
+];

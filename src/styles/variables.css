@@ -1,0 +1,56 @@
+:root {
+  /* === Couleurs principales (3 max) === */
+  --color-primary: #1E3A5F;
+  /* Bleu marine - navbar, sidebar, boutons principaux */
+  --color-secondary: #2C7A7B;
+  /* Teal - actions secondaires, badges validé */
+  --color-accent: #F2A65A;
+  /* Orange - alertes, en attente, notifications */
+
+  /* Variantes (dérivées des 3 couleurs, pas de nouvelle couleur) */
+  --color-primary-light: #2E4F7A;
+  --color-primary-dark: #142943;
+  --color-secondary-light: #3D9B9C;
+  --color-accent-light: #F5B87A;
+
+  /* === Neutrals === */
+  --color-white: #FFFFFF;
+  --color-bg: #F5F7FA;
+  --color-bg-card: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-text-primary: #1A202C;
+  --color-text-secondary: #4A5568;
+  --color-text-muted: #A0AEC0;
+
+  /* === États (dérivés, pas de couleur pure ajoutée) === */
+  --color-success: #2C7A7B;
+  /* réutilise secondary */
+  --color-warning: #F2A65A;
+  /* réutilise accent */
+  --color-danger: #C53030;
+  /* rouge nécessaire pour erreurs/refus, standard UI */
+
+  /* === Typographie === */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* === Spacing (échelle 4px) === */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* === Bordures / ombres === */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
