@@ -20,11 +20,4 @@ export const mockUsers = [
     name: "Awa Sarr",
     role: "salarie",
   },
-  {
-    id: 4,
-    email: "candidat@rh.com",
-    password: "123456",
-    name: "Ibrahima Ba",
-    role: "candidat",
-  },
 ];

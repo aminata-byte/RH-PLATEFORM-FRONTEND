@@ -8,7 +8,6 @@ const roleRedirect = {
   admin_rh: "/dashboard",
   manager: "/dashboard",
   salarie: "/portail",
-  candidat: "/recrutement",
 };
 
 function LoginPage() {
@@ -28,7 +27,7 @@ function LoginPage() {
     try {
       const user = await login(email, password);
       navigate(roleRedirect[user.role] || "/");
-    } catch (err) {
+    } catch {
       setError("Email ou mot de passe incorrect.");
     } finally {
       setLoading(false);
@@ -78,7 +77,7 @@ function LoginPage() {
 
         <p className="login-footer">
           Vous êtes candidat ?{" "}
-          <Link to="/inscription">Créez votre compte</Link>
+          <Link to="/">Consultez nos offres</Link>
         </p>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { pdf } from "@react-pdf/renderer";
 import {
   Users,
   CalendarDays,
@@ -6,6 +7,7 @@ import {
   Briefcase,
   Download,
 } from "lucide-react";
+import RapportPDF from "../../pdf/RapportPDF";
 import { departements } from "../../services/mockEmployes";
 import { typesDocument } from "../../services/mockDocuments";
 import { useEmployesStore } from "../../store/useEmployesStore";
@@ -189,36 +191,39 @@ function RapportsPage() {
         ).toFixed(1)
       : "—";
 
-  const handleExporter = () => {
-    const lignes = [
-      "RAPPORT RH — Vue d'ensemble",
-      `Généré le ${new Date().toLocaleDateString("fr-FR")}`,
-      "",
-      `Employés actifs : ${kpis.employesActifs} / ${kpis.totalEmployes}`,
-      `Congés en attente : ${kpis.congesEnAttente}`,
-      `Objectifs atteints : ${kpis.objectifsAtteints} / ${kpis.totalObjectifs}`,
-      `Candidatures en cours : ${kpis.candidaturesEnCours}`,
-      `Note de performance moyenne : ${noteMoyenne}/5`,
-      "",
-      "Répartition par département :",
-      ...repartitionDepartements.map((d) => `  - ${d.label} : ${d.valeur}`),
-      "",
-      "Congés par statut :",
-      ...repartitionConges.map((d) => `  - ${d.label} : ${d.valeur}`),
-      "",
-      "Candidatures par statut :",
-      ...repartitionCandidatures.map((d) => `  - ${d.label} : ${d.valeur}`),
-      "",
-      "Documents par type :",
-      ...repartitionDocuments.map((d) => `  - ${d.label} : ${d.valeur}`),
-    ];
-    const blob = new Blob([lignes.join("\n")], {
-      type: "text/plain;charset=utf-8",
-    });
+  // Assemble les répartitions déjà calculées en sections tabulaires pour le PDF.
+  // Le même schéma (titre + colonnes + lignes) peut être réutilisé pour générer
+  // un rapport dédié à un seul module (congés seuls, recrutement seul...) en ne
+  // passant qu'une section — c'est le patron à dupliquer pour les autres exports.
+  const versSection = (titre, items) => ({
+    titre,
+    colonnes: ["Catégorie", "Nombre"],
+    lignes: items.map((i) => [i.label, String(i.valeur)]),
+  });
+
+  const handleExporter = async () => {
+    const blob = await pdf(
+      <RapportPDF
+        titre="Rapport RH — Vue d'ensemble"
+        kpis={[
+          { label: "Employés actifs", valeur: `${kpis.employesActifs}/${kpis.totalEmployes}` },
+          { label: "Congés en attente", valeur: kpis.congesEnAttente },
+          { label: "Objectifs atteints", valeur: `${kpis.objectifsAtteints}/${kpis.totalObjectifs}` },
+          { label: "Candidatures en cours", valeur: kpis.candidaturesEnCours },
+          { label: "Note perf. moyenne", valeur: `${noteMoyenne}/5` },
+        ]}
+        sections={[
+          versSection("Employés par département", repartitionDepartements),
+          versSection("Congés par statut", repartitionConges),
+          versSection("Candidatures par statut", repartitionCandidatures),
+          versSection("Documents par type", repartitionDocuments),
+        ]}
+      />,
+    ).toBlob();
     const url = URL.createObjectURL(blob);
     const lien = document.createElement("a");
     lien.href = url;
-    lien.download = `rapport-rh-${new Date().toISOString().slice(0, 10)}.txt`;
+    lien.download = `rapport-rh-${new Date().toISOString().slice(0, 10)}.pdf`;
     lien.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };

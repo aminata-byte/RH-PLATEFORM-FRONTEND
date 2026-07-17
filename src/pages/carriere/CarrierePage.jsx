@@ -12,7 +12,10 @@ import { useEmployesStore } from "../../store/useEmployesStore";
 import { typesEvenement } from "../../services/mockCarriere";
 import { departements } from "../../services/mockEmployes";
 import Badge from "../../components/common/Badge/Badge";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./CarrierePage.css";
+
+const PAR_PAGE = 10;
 
 const typeEvenementBadge = {
   Promotion: "success",
@@ -100,6 +103,22 @@ function CarrierePage() {
     ).length;
     return { totalEvenements, promotions, enAttente, mobilites };
   }, [historiqueVisible, souhaitsVisibles]);
+
+  const [pageHistorique, setPageHistorique] = useState(1);
+  const totalPagesHistorique = Math.max(1, Math.ceil(historiqueVisible.length / PAR_PAGE));
+  if (pageHistorique > totalPagesHistorique) setPageHistorique(totalPagesHistorique);
+  const historiqueAffiche = historiqueVisible.slice(
+    (pageHistorique - 1) * PAR_PAGE,
+    pageHistorique * PAR_PAGE,
+  );
+
+  const [pageSouhaits, setPageSouhaits] = useState(1);
+  const totalPagesSouhaits = Math.max(1, Math.ceil(souhaitsVisibles.length / PAR_PAGE));
+  if (pageSouhaits > totalPagesSouhaits) setPageSouhaits(totalPagesSouhaits);
+  const souhaitsAffiches = souhaitsVisibles.slice(
+    (pageSouhaits - 1) * PAR_PAGE,
+    pageSouhaits * PAR_PAGE,
+  );
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -300,7 +319,7 @@ function CarrierePage() {
             </tr>
           </thead>
           <tbody>
-            {historiqueVisible.map((evenement) => (
+            {historiqueAffiche.map((evenement) => (
               <tr key={evenement.id}>
                 {!vuePersonnelle && <td>{evenement.employeNom}</td>}
                 <td>
@@ -336,6 +355,12 @@ function CarrierePage() {
         </table>
       </div>
 
+      <Pagination
+        page={pageHistorique}
+        totalPages={totalPagesHistorique}
+        onChange={setPageHistorique}
+      />
+
       {/* Souhaits d'évolution */}
       <h2 className="carriere-section-title">
         {vuePersonnelle ? "Mes souhaits d'évolution" : "Souhaits d'évolution"}
@@ -352,7 +377,7 @@ function CarrierePage() {
             </tr>
           </thead>
           <tbody>
-            {souhaitsVisibles.map((souhait) => (
+            {souhaitsAffiches.map((souhait) => (
               <tr
                 key={souhait.id}
                 className={canGerer ? "row-clickable" : undefined}
@@ -386,6 +411,12 @@ function CarrierePage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={pageSouhaits}
+        totalPages={totalPagesSouhaits}
+        onChange={setPageSouhaits}
+      />
 
       {/* Modal ajout événement (admin_rh) */}
       {modalEvenement && (

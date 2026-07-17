@@ -10,7 +10,10 @@ import { useAuth } from "../../store/useAuthStore";
 import { useFormationStore } from "../../store/useFormationStore";
 import { categoriesFormation } from "../../services/mockFormations";
 import Badge from "../../components/common/Badge/Badge";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./FormationPage.css";
+
+const PAR_PAGE = 9;
 
 const statutInscriptionConfig = {
   en_attente: { label: "En attente", status: "warning" },
@@ -70,6 +73,14 @@ function FormationPage() {
     [inscriptions, inscriptionSelectionneeId],
   );
 
+  const formationDeLInscription = useMemo(
+    () =>
+      inscriptionSelectionnee
+        ? formations.find((f) => f.id === inscriptionSelectionnee.formationId)
+        : null,
+    [formations, inscriptionSelectionnee],
+  );
+
   const stats = useMemo(() => {
     const disponibles = formations.filter(
       (f) => f.statut === "ouverte",
@@ -83,6 +94,22 @@ function FormationPage() {
     ).length;
     return { disponibles, total, enCours, terminees };
   }, [formations, inscriptionsVisibles]);
+
+  const [pageFormations, setPageFormations] = useState(1);
+  const totalPagesFormations = Math.max(1, Math.ceil(formations.length / PAR_PAGE));
+  if (pageFormations > totalPagesFormations) setPageFormations(totalPagesFormations);
+  const formationsAffichees = formations.slice(
+    (pageFormations - 1) * PAR_PAGE,
+    pageFormations * PAR_PAGE,
+  );
+
+  const [pageInscriptions, setPageInscriptions] = useState(1);
+  const totalPagesInscriptions = Math.max(1, Math.ceil(inscriptionsVisibles.length / PAR_PAGE));
+  if (pageInscriptions > totalPagesInscriptions) setPageInscriptions(totalPagesInscriptions);
+  const inscriptionsAffichees = inscriptionsVisibles.slice(
+    (pageInscriptions - 1) * PAR_PAGE,
+    pageInscriptions * PAR_PAGE,
+  );
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -263,7 +290,7 @@ function FormationPage() {
       </div>
 
       <div className="formations-grid">
-        {formations.map((formation) => (
+        {formationsAffichees.map((formation) => (
           <div className="formation-card" key={formation.id}>
             <div className="formation-top">
               <p className="formation-titre">{formation.titre}</p>
@@ -305,6 +332,12 @@ function FormationPage() {
         ))}
       </div>
 
+      <Pagination
+        page={pageFormations}
+        totalPages={totalPagesFormations}
+        onChange={setPageFormations}
+      />
+
       {/* Inscriptions */}
       <h2 className="formation-section-title">
         {isSalarie ? "Mes inscriptions" : "Inscriptions de l'équipe"}
@@ -320,7 +353,7 @@ function FormationPage() {
             </tr>
           </thead>
           <tbody>
-            {inscriptionsVisibles.map((inscription) => (
+            {inscriptionsAffichees.map((inscription) => (
               <tr
                 key={inscription.id}
                 className="row-clickable"
@@ -353,6 +386,12 @@ function FormationPage() {
         </table>
       </div>
 
+      <Pagination
+        page={pageInscriptions}
+        totalPages={totalPagesInscriptions}
+        onChange={setPageInscriptions}
+      />
+
       {/* Modal détail inscription (admin_rh / manager) */}
       {inscriptionSelectionnee && (
         <div className="modal-overlay" onClick={fermerDetailInscription}>
@@ -374,6 +413,35 @@ function FormationPage() {
                   {inscriptionSelectionnee.formationTitre}
                 </span>
               </div>
+              {formationDeLInscription && (
+                <>
+                  <div className="detail-row">
+                    <span className="detail-label">Catégorie</span>
+                    <span className="detail-value">
+                      {formationDeLInscription.categorie}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Formateur</span>
+                    <span className="detail-value">
+                      {formationDeLInscription.formateur}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Durée de la formation</span>
+                    <span className="detail-value">
+                      Du {formatDate(formationDeLInscription.dateDebut)} au{" "}
+                      {formatDate(formationDeLInscription.dateFin)}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Places</span>
+                    <span className="detail-value">
+                      {formationDeLInscription.placesTotal}
+                    </span>
+                  </div>
+                </>
+              )}
               <div className="detail-row">
                 <span className="detail-label">Date d'inscription</span>
                 <span className="detail-value">
@@ -391,6 +459,15 @@ function FormationPage() {
                   {statutInscriptionConfig[inscriptionSelectionnee.statut].label}
                 </Badge>
               </div>
+
+              {inscriptionSelectionnee.message && (
+                <div className="detail-row detail-row-message">
+                  <span className="detail-label">Message</span>
+                  <span className="detail-value">
+                    {inscriptionSelectionnee.message}
+                  </span>
+                </div>
+              )}
 
               {canGerer && inscriptionSelectionnee.statut !== "terminee" && (
                 <div className="modal-actions detail-actions">

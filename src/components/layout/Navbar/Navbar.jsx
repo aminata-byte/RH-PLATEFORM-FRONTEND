@@ -9,12 +9,11 @@ const roleLabels = {
   admin_rh: "Admin RH",
   manager: "Manager",
   salarie: "Salarié",
-  candidat: "Candidat",
 };
 
 const APERCU_MAX = 5;
 
-function Navbar({ onOuvrirMenu }) {
+function Navbar({ onToggleSidebar }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const {
@@ -54,8 +53,8 @@ function Navbar({ onOuvrirMenu }) {
       <div className="navbar-left">
         <button
           className="icon-btn navbar-menu-btn"
-          onClick={onOuvrirMenu}
-          title="Ouvrir le menu"
+          onClick={onToggleSidebar}
+          title="Réduire / agrandir le menu"
         >
           <Menu size={20} />
         </button>

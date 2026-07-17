@@ -1,0 +1,46 @@
+import { StyleSheet } from "@react-pdf/renderer";
+
+// Styles partagés par les documents "type courrier" (attestations, contrat, générique).
+export const baseStyles = StyleSheet.create({
+  page: { padding: 44, fontSize: 10, fontFamily: "Helvetica", color: "#1a1a1a", lineHeight: 1.5 },
+  entete: { marginBottom: 10 },
+  entrepriseNom: { fontSize: 11, fontFamily: "Helvetica-Bold", color: "#1E3A5F" },
+  entrepriseLigne: { fontSize: 8.5, color: "#555", marginTop: 1 },
+  dateLieu: { fontSize: 9, color: "#555", textAlign: "right", marginTop: 20 },
+  titre: {
+    fontSize: 14,
+    fontFamily: "Helvetica-Bold",
+    color: "#1E3A5F",
+    textAlign: "center",
+    marginTop: 26,
+    marginBottom: 26,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  paragraphe: { fontSize: 10, marginBottom: 12, textAlign: "justify" },
+  gras: { fontFamily: "Helvetica-Bold" },
+  encadre: {
+    border: "0.5pt solid #DCE3E1",
+    borderRadius: 4,
+    padding: 10,
+    marginVertical: 14,
+    backgroundColor: "#F7F8F7",
+  },
+  encadreLigne: { fontSize: 9.5, marginBottom: 3, flexDirection: "row" },
+  encadreLabel: { width: 150, color: "#555" },
+  encadreValeur: { fontFamily: "Helvetica-Bold" },
+  articleTitre: { fontSize: 10, fontFamily: "Helvetica-Bold", marginTop: 14, marginBottom: 4 },
+  signatureBlock: { marginTop: 50, alignItems: "flex-end" },
+  signatureLigne: { fontSize: 9, marginBottom: 2 },
+  footer: {
+    position: "absolute",
+    bottom: 24,
+    left: 44,
+    right: 44,
+    fontSize: 6.5,
+    color: "#888",
+    textAlign: "center",
+    borderTop: "0.5pt solid #E2E8F0",
+    paddingTop: 6,
+  },
+});

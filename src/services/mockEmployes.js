@@ -129,4 +129,16 @@ export const mockEmployes = [
     typeContrat: "Stage",
     dateFinContrat: "2026-07-25",
   },
+  {
+    id: 11,
+    nom: "Ibrahima Ndoye",
+    email: "ibrahima.ndoye@rh.com",
+    poste: "Chargé de communication",
+    departement: "Marketing",
+    dateEmbauche: "2022-10-03",
+    statut: "actif",
+    role: "salarie",
+    typeContrat: "CDI",
+    dateFinContrat: null,
+  },
 ];

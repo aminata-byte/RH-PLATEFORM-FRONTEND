@@ -13,7 +13,10 @@ import { useEmployesStore } from "../../store/useEmployesStore";
 import { departements, typesContrat } from "../../services/mockEmployes";
 import Badge from "../../components/common/Badge/Badge";
 import Button from "../../components/common/Button/Button";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./EmployesPage.css";
+
+const PAR_PAGE = 10;
 
 const statutConfig = {
   actif: { label: "Actif", status: "success" },
@@ -114,6 +117,28 @@ function EmployesPage() {
       return matchSearch && matchDepartement && matchContrat;
     });
   }, [employes, search, departementFiltre, contratFiltre]);
+
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(employesFiltres.length / PAR_PAGE));
+
+  // Revient à la page 1 si la recherche/les filtres changent le résultat,
+  // et se recale si la page courante dépasse le nouveau nombre de pages
+  // (ex. suppression du dernier employé d'une page).
+  const [filtresPrecedents, setFiltresPrecedents] = useState(
+    `${search}|${departementFiltre}|${contratFiltre}`,
+  );
+  const filtresActuels = `${search}|${departementFiltre}|${contratFiltre}`;
+  if (filtresActuels !== filtresPrecedents) {
+    setFiltresPrecedents(filtresActuels);
+    setPage(1);
+  } else if (page > totalPages) {
+    setPage(totalPages);
+  }
+
+  const employesAffiches = employesFiltres.slice(
+    (page - 1) * PAR_PAGE,
+    page * PAR_PAGE,
+  );
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -349,7 +374,7 @@ function EmployesPage() {
             </tr>
           </thead>
           <tbody>
-            {employesFiltres.map((employe) => (
+            {employesAffiches.map((employe) => (
               <tr
                 key={employe.id}
                 className="row-clickable"
@@ -413,6 +438,8 @@ function EmployesPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {/* Modal détail employé */}
       {employeDetail && (

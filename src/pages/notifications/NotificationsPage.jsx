@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { CheckCheck } from "lucide-react";
 import { useNotifications } from "../../store/useNotificationsStore";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./NotificationsPage.css";
+
+const PAR_PAGE = 10;
 
 const typeLabels = {
   info: "Info",
@@ -33,6 +36,21 @@ function NotificationsPage() {
       return matchType && matchStatut;
     });
   }, [notificationsTriees, typeFiltre, statutFiltre]);
+
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(notificationsFiltrees.length / PAR_PAGE));
+  const [filtresPrecedents, setFiltresPrecedents] = useState(`${typeFiltre}|${statutFiltre}`);
+  const filtresActuels = `${typeFiltre}|${statutFiltre}`;
+  if (filtresActuels !== filtresPrecedents) {
+    setFiltresPrecedents(filtresActuels);
+    setPage(1);
+  } else if (page > totalPages) {
+    setPage(totalPages);
+  }
+  const notificationsAffichees = notificationsFiltrees.slice(
+    (page - 1) * PAR_PAGE,
+    page * PAR_PAGE,
+  );
 
   const nonLues = notificationsUtilisateur.filter((n) => !n.lu).length;
 
@@ -93,7 +111,7 @@ function NotificationsPage() {
       </div>
 
       <div className="notifications-list">
-        {notificationsFiltrees.map((notif) => (
+        {notificationsAffichees.map((notif) => (
           <button
             key={notif.id}
             className={`notification-card${notif.lu ? "" : " notification-card-non-lu"}`}
@@ -118,6 +136,8 @@ function NotificationsPage() {
           <p className="notifications-empty">Aucune notification.</p>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   );
 }

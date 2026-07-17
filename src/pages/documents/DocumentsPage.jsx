@@ -8,12 +8,21 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { pdf } from "@react-pdf/renderer";
 import { useAuth } from "../../store/useAuthStore";
 import { useDocumentsStore } from "../../store/useDocumentsStore";
 import { useEmployesStore } from "../../store/useEmployesStore";
 import { typesDocument } from "../../services/mockDocuments";
 import Badge from "../../components/common/Badge/Badge";
+import BulletinPaiePDF from "../../pdf/BulletinPaiePDF";
+import AttestationTravailPDF from "../../pdf/AttestationTravailPDF";
+import AttestationSalairePDF from "../../pdf/AttestationSalairePDF";
+import ContratTravailPDF from "../../pdf/ContratTravailPDF";
+import DocumentGeneriquePDF from "../../pdf/DocumentGeneriquePDF";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./DocumentsPage.css";
+
+const PAR_PAGE = 10;
 
 const typeBadgeStatus = {
   "Bulletin de paie": "success",
@@ -74,6 +83,23 @@ function DocumentsPage() {
     });
   }, [documentsVisibles, search, typeFiltre, employeFiltre]);
 
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(documentsFiltres.length / PAR_PAGE));
+  const [filtresPrecedents, setFiltresPrecedents] = useState(
+    `${search}|${typeFiltre}|${employeFiltre}`,
+  );
+  const filtresActuels = `${search}|${typeFiltre}|${employeFiltre}`;
+  if (filtresActuels !== filtresPrecedents) {
+    setFiltresPrecedents(filtresActuels);
+    setPage(1);
+  } else if (page > totalPages) {
+    setPage(totalPages);
+  }
+  const documentsAffiches = documentsFiltres.slice(
+    (page - 1) * PAR_PAGE,
+    page * PAR_PAGE,
+  );
+
   const stats = useMemo(() => {
     const total = documentsVisibles.length;
     const bulletins = documentsVisibles.filter(
@@ -100,24 +126,56 @@ function DocumentsPage() {
       year: "numeric",
     });
 
-  const handleTelecharger = (doc) => {
+  const genererDocumentPDF = (doc, employe) => {
+    const dateEdition = formatDate(doc.dateAjout);
+    const dateDoc = new Date(doc.dateAjout);
+
+    switch (doc.type) {
+      case "Bulletin de paie":
+        return (
+          <BulletinPaiePDF
+            employe={employe}
+            periode={{
+              code: dateDoc.toLocaleDateString("fr-FR", { month: "2-digit", year: "2-digit" }),
+              debut: new Date(dateDoc.getFullYear(), dateDoc.getMonth(), 1).toLocaleDateString("fr-FR"),
+              fin: new Date(dateDoc.getFullYear(), dateDoc.getMonth() + 1, 0).toLocaleDateString("fr-FR"),
+              datePaiement: dateEdition,
+            }}
+          />
+        );
+      case "Contrat de travail":
+        return <ContratTravailPDF employe={employe} dateEdition={dateEdition} />;
+      case "Attestation de travail":
+        return <AttestationTravailPDF employe={employe} dateEdition={dateEdition} />;
+      case "Attestation de salaire":
+        return <AttestationSalairePDF employe={employe} dateEdition={dateEdition} />;
+      default:
+        return <DocumentGeneriquePDF titre={doc.titre} employe={employe} dateEdition={dateEdition} />;
+    }
+  };
+
+  const handleTelecharger = async (doc) => {
     let url;
     let nomFichier = doc.fichierNom;
 
     if (doc.fichierFile instanceof File) {
       url = URL.createObjectURL(doc.fichierFile);
     } else {
-      const contenu = [
-        `Document : ${doc.titre}`,
-        `Employé : ${doc.employeNom}`,
-        `Type : ${doc.type}`,
-        `Ajouté le : ${formatDate(doc.dateAjout)}`,
-        "",
-        "(Fichier de démonstration — à remplacer par le vrai document une fois le backend connecté.)",
-      ].join("\n");
-      const blob = new Blob([contenu], { type: "text/plain;charset=utf-8" });
+      const employeTrouve = employesInternes.find((e) => e.email === doc.employeEmail);
+      const employe = {
+        nom: doc.employeNom,
+        poste: "—",
+        departement: "—",
+        typeContrat: "—",
+        dateEmbauche: "—",
+        dateFinContrat: null,
+        id: 0,
+        ...employeTrouve,
+        matricule: String(employeTrouve?.id ?? 0).padStart(3, "0"),
+      };
+      const blob = await pdf(genererDocumentPDF(doc, employe)).toBlob();
       url = URL.createObjectURL(blob);
-      nomFichier = nomFichier.replace(/\.[^.]+$/, "") + ".txt";
+      nomFichier = nomFichier.replace(/\.[^.]+$/, "") + ".pdf";
     }
 
     const lien = document.createElement("a");
@@ -315,7 +373,7 @@ function DocumentsPage() {
             </tr>
           </thead>
           <tbody>
-            {documentsFiltres.map((doc) => (
+            {documentsAffiches.map((doc) => (
               <tr key={doc.id}>
                 <td>
                   <div className="document-titre">
@@ -353,6 +411,8 @@ function DocumentsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {/* Modal ajout document */}
       {modalAjout && (

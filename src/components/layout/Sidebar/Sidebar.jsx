@@ -43,7 +43,7 @@ const menuItems = [
     label: "Recrutement",
     path: "/recrutement",
     icon: Briefcase,
-    roles: ["admin_rh", "manager", "candidat"],
+    roles: ["admin_rh", "manager"],
   },
   {
     label: "Formation",
@@ -77,38 +77,33 @@ const menuItems = [
   },
 ];
 
-function Sidebar({ ouvert = false, onFermer }) {
+function Sidebar({ reduit = false }) {
   const { role } = useAuth();
   const visibleItems = menuItems.filter((item) => item.roles.includes(role));
 
   return (
-    <>
-      <div
-        className={`sidebar-overlay${ouvert ? " sidebar-overlay-visible" : ""}`}
-        onClick={onFermer}
-      />
-      <aside className={`sidebar${ouvert ? " sidebar-open" : ""}`}>
-        <div className="sidebar-logo">
-          <span className="sidebar-logo-text">RH Platform</span>
-        </div>
+    <aside className={`sidebar${reduit ? " sidebar-reduit" : ""}`}>
+      <div className="sidebar-logo">
+        <span className="sidebar-logo-text">RH Platform</span>
+      </div>
 
-        <nav className="sidebar-nav">
-          <ul>
-            {visibleItems.map(({ label, path, icon: Icon }) => (
-              <li key={path}>
-                <NavLink
-                  to={path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                >
-                  <Icon size={18} />
-                  <span>{label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-    </>
+      <nav className="sidebar-nav">
+        <ul>
+          {visibleItems.map(({ label, path, icon: Icon }) => (
+            <li key={path}>
+              <NavLink
+                to={path}
+                title={reduit ? label : undefined}
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                <Icon size={18} />
+                <span>{label}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
   );
 }
 

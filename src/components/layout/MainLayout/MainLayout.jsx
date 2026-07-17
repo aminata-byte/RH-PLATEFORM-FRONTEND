@@ -5,20 +5,18 @@ import Sidebar from "../Sidebar/Sidebar";
 import "./MainLayout.css";
 
 function MainLayout({ children }) {
-  const [sidebarOuvert, setSidebarOuvert] = useState(false);
+  const [sidebarReduit, setSidebarReduit] = useState(false);
   const { pathname } = useLocation();
-  const [pathnamePrecedent, setPathnamePrecedent] = useState(pathname);
-
-  if (pathname !== pathnamePrecedent) {
-    setPathnamePrecedent(pathname);
-    setSidebarOuvert(false);
-  }
 
   return (
-    <div className="main-layout">
-      <Sidebar ouvert={sidebarOuvert} onFermer={() => setSidebarOuvert(false)} />
-      <Navbar onOuvrirMenu={() => setSidebarOuvert(true)} />
-      <main className="content">{children}</main>
+    <div className={`main-layout${sidebarReduit ? " sidebar-reduit" : ""}`}>
+      <Sidebar reduit={sidebarReduit} />
+      <Navbar onToggleSidebar={() => setSidebarReduit((prev) => !prev)} />
+      <main className="content">
+        <div className="page-transition" key={pathname}>
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

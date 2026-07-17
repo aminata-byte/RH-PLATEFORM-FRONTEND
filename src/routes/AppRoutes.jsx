@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import MainLayout from "../components/layout/MainLayout/MainLayout";
 
 // Pages publiques
+import OffresPubliquesPage from "../pages/public/OffresPubliquesPage";
 import LoginPage from "../pages/LoginPage/LoginPage";
-import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage/ForgotPasswordPage";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 
@@ -14,6 +14,7 @@ import EmployesPage from "../pages/employes/EmployesPage";
 import CongesPage from "../pages/conges/CongesPage";
 import PerformancePage from "../pages/performance/PerformancePage";
 import RecrutementPage from "../pages/recrutement/RecrutementPage";
+import CandidatureDetailPage from "../pages/recrutement/CandidatureDetailPage";
 import FormationPage from "../pages/formation/FormationPage";
 import DocumentsPage from "../pages/documents/DocumentsPage";
 import CarrierePage from "../pages/carriere/CarrierePage";
@@ -25,11 +26,10 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirection racine */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Racine publique — offres d'emploi, accessible sans compte */}
+        <Route path="/" element={<OffresPubliquesPage />} />
         {/* Publiques */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/inscription" element={<RegisterPage />} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
@@ -81,13 +81,25 @@ function AppRoutes() {
           }
         />
 
-        {/* Recrutement — Admin RH gère, Manager consulte, Candidat postule */}
+        {/* Recrutement — Admin RH gère, Manager consulte (les candidats postulent depuis la page publique) */}
         <Route
           path="/recrutement"
           element={
-            <ProtectedRoute allowedRoles={["admin_rh", "manager", "candidat"]}>
+            <ProtectedRoute allowedRoles={["admin_rh", "manager"]}>
               <MainLayout>
                 <RecrutementPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Détail d'une candidature — Admin RH / Manager uniquement */}
+        <Route
+          path="/recrutement/candidatures/:id"
+          element={
+            <ProtectedRoute allowedRoles={["admin_rh", "manager"]}>
+              <MainLayout>
+                <CandidatureDetailPage />
               </MainLayout>
             </ProtectedRoute>
           }

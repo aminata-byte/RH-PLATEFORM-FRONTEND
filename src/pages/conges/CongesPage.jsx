@@ -12,7 +12,10 @@ import { useCongesStore } from "../../store/useCongesStore";
 import { typesConges } from "../../services/mockConges";
 import Badge from "../../components/common/Badge/Badge";
 import Button from "../../components/common/Button/Button";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./CongesPage.css";
+
+const PAR_PAGE = 10;
 
 const statutConfig = {
   en_attente: { label: "En attente", status: "warning" },
@@ -49,6 +52,20 @@ function CongesPage() {
     if (filtreStatut === "all") return demandesVisibles;
     return demandesVisibles.filter((d) => d.statut === filtreStatut);
   }, [demandesVisibles, filtreStatut]);
+
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(demandesFiltrees.length / PAR_PAGE));
+  const [filtrePrecedent, setFiltrePrecedent] = useState(filtreStatut);
+  if (filtreStatut !== filtrePrecedent) {
+    setFiltrePrecedent(filtreStatut);
+    setPage(1);
+  } else if (page > totalPages) {
+    setPage(totalPages);
+  }
+  const demandesAffichees = demandesFiltrees.slice(
+    (page - 1) * PAR_PAGE,
+    page * PAR_PAGE,
+  );
 
   const stats = useMemo(() => {
     const enAttente = demandesVisibles.filter(
@@ -215,7 +232,7 @@ function CongesPage() {
             </tr>
           </thead>
           <tbody>
-            {demandesFiltrees.map((demande) => (
+            {demandesAffichees.map((demande) => (
               <tr key={demande.id}>
                 {role !== "salarie" && <td>{demande.employeNom}</td>}
                 <td>{demande.type}</td>
@@ -265,6 +282,8 @@ function CongesPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {/* Modal nouvelle demande de congé (salarié) */}
       {modalDemande && (

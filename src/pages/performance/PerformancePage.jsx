@@ -4,7 +4,10 @@ import { useAuth } from "../../store/useAuthStore";
 import { usePerformanceStore } from "../../store/usePerformanceStore";
 import { useEmployesStore } from "../../store/useEmployesStore";
 import Badge from "../../components/common/Badge/Badge";
+import Pagination from "../../components/common/Pagination/Pagination";
 import "./PerformancePage.css";
+
+const PAR_PAGE = 10;
 
 const statutConfig = {
   en_cours: { label: "En cours", status: "warning" },
@@ -71,6 +74,22 @@ function PerformancePage() {
         : "—";
     return { total: objectifsVisibles.length, enCours, atteints, moyenneNote };
   }, [objectifsVisibles, evaluationsVisibles]);
+
+  const [pageObjectifs, setPageObjectifs] = useState(1);
+  const totalPagesObjectifs = Math.max(1, Math.ceil(objectifsVisibles.length / PAR_PAGE));
+  if (pageObjectifs > totalPagesObjectifs) setPageObjectifs(totalPagesObjectifs);
+  const objectifsAffiches = objectifsVisibles.slice(
+    (pageObjectifs - 1) * PAR_PAGE,
+    pageObjectifs * PAR_PAGE,
+  );
+
+  const [pageEvaluations, setPageEvaluations] = useState(1);
+  const totalPagesEvaluations = Math.max(1, Math.ceil(evaluationsVisibles.length / PAR_PAGE));
+  if (pageEvaluations > totalPagesEvaluations) setPageEvaluations(totalPagesEvaluations);
+  const evaluationsAffichees = evaluationsVisibles.slice(
+    (pageEvaluations - 1) * PAR_PAGE,
+    pageEvaluations * PAR_PAGE,
+  );
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -232,7 +251,7 @@ function PerformancePage() {
 
       {tab === "objectifs" && (
         <div className="performance-list">
-          {objectifsVisibles.map((objectif) => (
+          {objectifsAffiches.map((objectif) => (
             <div className="objectif-card" key={objectif.id}>
               <div className="objectif-top">
                 <div>
@@ -261,12 +280,18 @@ function PerformancePage() {
           {objectifsVisibles.length === 0 && (
             <p className="performance-empty">Aucun objectif pour le moment.</p>
           )}
+
+          <Pagination
+            page={pageObjectifs}
+            totalPages={totalPagesObjectifs}
+            onChange={setPageObjectifs}
+          />
         </div>
       )}
 
       {tab === "evaluations" && (
         <div className="performance-list">
-          {evaluationsVisibles.map((evaluation) => (
+          {evaluationsAffichees.map((evaluation) => (
             <div className="evaluation-card" key={evaluation.id}>
               <div className="evaluation-top">
                 <div>
@@ -295,6 +320,12 @@ function PerformancePage() {
               Aucune évaluation pour le moment.
             </p>
           )}
+
+          <Pagination
+            page={pageEvaluations}
+            totalPages={totalPagesEvaluations}
+            onChange={setPageEvaluations}
+          />
         </div>
       )}
 
